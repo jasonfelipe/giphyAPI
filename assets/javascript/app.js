@@ -2,17 +2,18 @@
 var gifButtons = ["Mario", "Sonic", "Kirby"];
 
 for (i = 0; i < gifButtons.length; i++){
-    $('#gameButtons').append("<button style='margin:5px' data-game=" + gifButtons[i] + ">" + gifButtons[i] + "</button>"); //for some reason giving #buttons .attr didn't work, so I brute forced it.
-}
+    $('#gameButtons').append("<button id='gameButton' style='margin:5px' data-game=" + gifButtons[i] + ">" + gifButtons[i] + "</button>"); //for some reason giving #buttons .attr didn't work, so I brute forced it.
+    
+  }
+
 console.log(gameButtons)
 
-
-$('button').on("click", function() {
+$('#gameButton').on("click", function() {
     var game = $(this).attr("data-game");
-
+    
     var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
       game + "&api_key=S2WxAN0l1NhiYgOVUn8rPyjLMMlcPbXK&limit=10&tag=game";
-    console.log(queryURL)
+    
 $.ajax({
     url: queryURL,
     method: "GET"
@@ -43,16 +44,21 @@ $.ajax({
   });
 });
 
-$('#submit').click(function(e){
+$('#search').click(function(e){
 
 e.preventDefault();
 
 var searchTerm = $('#search-term').val().trim();
 
-
+console.log(searchTerm)
 //add script to put button.
 gifButtons.push(searchTerm);
+console.log(gifButtons)
+
+$('#gameButtons').append("<button id='gameButton' style='margin:5px' data-game=>" + searchTerm + "</button>")
 
 
-    })
+
+
+})
     
