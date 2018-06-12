@@ -9,11 +9,11 @@
 var gifButtons = ["Mario", "Sonic", "Kirby", "Solid Snake", "Ryu", "Master Chief", "Yoshi", "Crash Bandicoot"];
 
 for (i = 0; i < gifButtons.length; i++){
-    var gameButtons = $('<button>'+ gifButtons[i] + '</button>');
-    gameButtons.attr("class", "showGif");
-    gameButtons.attr("style", "margin:5px");
-    gameButtons.attr("data-game", gifButtons[i]);
-    $('#gameButtons').append(gameButtons)
+    var characterButtons = $('<button>'+ gifButtons[i] + '</button>');
+    characterButtons.attr("class", "showGif");
+    characterButtons.attr("style", "margin:5px");
+    characterButtons.attr("data-character", gifButtons[i]);
+    $('#characterButtons').append(characterButtons)
       }
 
 
@@ -25,14 +25,14 @@ for (i = 0; i < gifButtons.length; i++){
     
     gifButtons.push(searchTerm);
     
-   var searchedGame = $('<button>' + searchTerm + '</button>');
-   searchedGame.attr({ // entering ALL  attributes
+   var searchedCharacter = $('<button>' + searchTerm + '</button>');
+   searchedCharacter.attr({ // entering ALL  attributes
         "class": "showGif",
         "style": "margin:5px",
-        "data-game": searchTerm 
+        "data-character": searchTerm 
    });
 
-   $('#gameButtons').append(searchedGame);
+   $('#characterButtons').append(searchedCharacter);
    $('.showGif').on("click", theSearch);
 
   });
@@ -40,17 +40,31 @@ for (i = 0; i < gifButtons.length; i++){
 
 //The click event
 $('.showGif').on("click", theSearch);
-$(".gif").on("click", runOrStop)
+$(".gif").on("click", runOrStop);
+// $('.showGif').on('click', bioSearch);
 
+// function bioSearch() { //testing out GiantBomb wiki API, error = No 'Access-Control-Allow-Origin' header is present on the requested resource. Origin 'null' is therefore not allowed access.
 
+//   var characterName = $(this).attr("data-character");
+//   var noSpaceName = encodeURIComponent(characterName)
+//   var gbKey = "f33df788078f2a427639071326cf5da2acadd069";
+//   var queryURL = "https://www.giantbomb.com/api/search/?api_key=" + gbKey + "&format=json&query=" + noSpaceName + "&resources=character"
 
+//   $.ajax({
+//     url: queryURL,
+//     method:"GET"
+//   }).then(function(response) {
+//     var results = response.results.deck
+//     console.log(results)
+//   })
+// }
 
 //The separate function.
 function theSearch() {
-  var game = $(this).attr("data-game");
+  var characterName = $(this).attr("data-character");
 
   var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
-    game + "&api_key=S2WxAN0l1NhiYgOVUn8rPyjLMMlcPbXK&limit=10";
+    characterName + "&api_key=S2WxAN0l1NhiYgOVUn8rPyjLMMlcPbXK&limit=10";
 
 
   
@@ -70,20 +84,20 @@ $.ajax({
 
         var p = $("<p>").text("Rating: " + rating);
 
-        var gameImage = $("<img>");
+        var characterImage = $("<img>");
 
-        gameImage.attr("src", results[i].images.original_still.url);
+        characterImage.attr("src", results[i].images.original_still.url);
 
-        gameImage.attr({
+        characterImage.attr({
           "data-still" : results[i].images.original_still.url,
           "data-animate" : results[i].images.original.url,
           "data-state": "still"
 
         });
 
-        gameImage.addClass("gif");
+        characterImage.addClass("gif");
         gifDiv.append(p);
-        gifDiv.append(gameImage);
+        gifDiv.append(characterImage);
 
         console.log(results[i].images)
         $("#gifs-appear-here").prepend(gifDiv);
