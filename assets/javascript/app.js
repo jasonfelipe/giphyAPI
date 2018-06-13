@@ -99,7 +99,6 @@ $.ajax({
         gifDiv.append(p);
         gifDiv.append(characterImage);
 
-        console.log(results[i].images)
         $("#gifs-appear-here").prepend(gifDiv);
         $(".gif").on("click", runOrStop)
 
@@ -111,7 +110,6 @@ $.ajax({
 
 //Add Stop and Go Functions.
 function runOrStop (){
-  console.log(this)
   var state = $(this).attr("data-state");
 
   if (state === "still") {
