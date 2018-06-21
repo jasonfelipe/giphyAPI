@@ -7,18 +7,20 @@
 </head>
 <body>
         <div class="container">
-                <div class="row">
-                        <h3>Video Game Character Giphy!</h3>
+                <div style="background-color:black; color:white;" class="jumbotron">
+                        <h3 class="text-center">Video Game Character Giphy!</h3>
                 </div>
                 
-                <div class = "row" id="characterButtons"></div>
+                <div style="margin: 25px" class = "row" id="characterButtons"></div>
+                
+                <div class ="row">
+                        <p>Think of a video game character!</p>
+                </div>
 
                 <form>
-                        <div class="row">
-                                <label>Think about a video game character!</label>
-                                <input style="width:auto" type="text" class="search-term" id="search-term" placeholder="Put their name here!">
-                                <button id="search" type="submit">Submit</button>
-
+                        <div class="row">                              
+                                <input style="width:250px" type="text" class="search-term" id="search-term" placeholder="Put their name here!">
+                                <button style="margin-left: 10px" class="btn btn-primary" id="search" type="submit">Submit</button>
                         </div>
                 </form>
         
@@ -26,7 +28,7 @@
                 <div class="row" id="bio"></div>
 
 
-                <div id="gifs-appear-here">
+                <div  class="columns" id="gifs-appear-here">
                 </div>
         </div>
 

@@ -1,16 +1,8 @@
-//SOME BUGS!
-//Mario doesn't work
-//Some gifs do not show up as a still
-//Some gifs do not stop when clicked
-
-
-
-
 var gifButtons = ["Mario", "Sonic", "Kirby", "Solid Snake", "Ryu", "Master Chief", "Yoshi", "Crash Bandicoot"];
 
 for (i = 0; i < gifButtons.length; i++){
     var characterButtons = $('<button>'+ gifButtons[i] + '</button>');
-    characterButtons.attr("class", "showGif");
+    characterButtons.attr("class", "showGif btn btn-primary"); //putting attributes one at a time
     characterButtons.attr("style", "margin:5px");
     characterButtons.attr("data-character", gifButtons[i]);
     $('#characterButtons').append(characterButtons)
@@ -27,7 +19,7 @@ for (i = 0; i < gifButtons.length; i++){
     
    var searchedCharacter = $('<button>' + searchTerm + '</button>');
    searchedCharacter.attr({ // entering ALL  attributes
-        "class": "showGif",
+        "class": "showGif btn btn-default",
         "style": "margin:5px",
         "data-character": searchTerm 
    });
@@ -91,7 +83,9 @@ $.ajax({
         characterImage.attr({
           "data-still" : results[i].images.original_still.url,
           "data-animate" : results[i].images.original.url,
-          "data-state": "still"
+          "data-state": "still",
+          "style": "display: block; margin-left: auto; margin-right: auto; width: 50%;",
+          "id": "picture"
 
         });
 
@@ -100,7 +94,7 @@ $.ajax({
         gifDiv.append(characterImage);
 
         $("#gifs-appear-here").prepend(gifDiv);
-        $(".gif").on("click", runOrStop)
+        $("#picture").on("click", runOrStop);
 
 
       }
