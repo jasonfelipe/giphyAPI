@@ -48,6 +48,7 @@ $('#search').click(function (e) {
   });
 
   $('#characterButtons').append(searchedCharacter);
+  $('.showGif').on("click", emptyGifs);
   $('.showGif').on("click", theSearch);
   $('.showGif').on('click', bioSearch);
 
