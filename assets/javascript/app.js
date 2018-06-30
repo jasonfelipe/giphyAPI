@@ -1,3 +1,20 @@
+(function() {
+  var cors_api_host = 'cors-anywhere.herokuapp.com';
+  var cors_api_url = 'https://' + cors_api_host + '/';
+  var slice = [].slice;
+  var origin = window.location.protocol + '//' + window.location.host;
+  var open = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function() {
+      var args = slice.call(arguments);
+      var targetOrigin = /^https?:\/\/([^\/]+)/i.exec(args[1]);
+      if (targetOrigin && targetOrigin[0].toLowerCase() !== origin &&
+          targetOrigin[1] !== cors_api_host) {
+          args[1] = cors_api_url + args[1];
+      }
+      return open.apply(this, args);
+  };
+})();
+
 var gifButtons = ["Mario", "Sonic", "Kirby", "Solid Snake", "Ryu", "Master Chief", "Yoshi", "Crash Bandicoot"];
 
 for (i = 0; i < gifButtons.length; i++){
@@ -33,23 +50,26 @@ for (i = 0; i < gifButtons.length; i++){
 //The click event
 $('.showGif').on("click", theSearch);
 $(".gif").on("click", runOrStop);
-// $('.showGif').on('click', bioSearch);
+$('.showGif').on('click', bioSearch);
 
-// function bioSearch() { //testing out GiantBomb wiki API, error = No 'Access-Control-Allow-Origin' header is present on the requested resource. Origin 'null' is therefore not allowed access.
+function bioSearch() { //testing out GiantBomb wiki API, error = No 'Access-Control-Allow-Origin' header is present on the requested resource. Origin 'null' is therefore not allowed access.
 
-//   var characterName = $(this).attr("data-character");
-//   var noSpaceName = encodeURIComponent(characterName)
-//   var gbKey = "f33df788078f2a427639071326cf5da2acadd069";
-//   var queryURL = "https://www.giantbomb.com/api/search/?api_key=" + gbKey + "&format=json&query=" + noSpaceName + "&resources=character"
+  var characterName = $(this).attr("data-character");
+  var noSpaceName = encodeURIComponent(characterName)
+  var gbKey = "f33df788078f2a427639071326cf5da2acadd069";
+  var queryURL = "https://www.giantbomb.com/api/search/?api_key=" + gbKey + "&format=json&query=" + noSpaceName + "&resources=character"
 
-//   $.ajax({
-//     url: queryURL,
-//     method:"GET"
-//   }).then(function(response) {
-//     var results = response.results.deck
-//     console.log(results)
-//   })
-// }
+  $.ajax({
+    url: queryURL,
+    method:"GET"
+  }).then(function(response) {
+
+    var results = response.results[0].deck
+    console.log(results)
+
+    $('#bio').html(results);
+  })
+}
 
 //The separate function.
 function theSearch() {
