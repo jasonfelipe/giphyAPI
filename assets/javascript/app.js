@@ -1,58 +1,74 @@
-(function() {
+//Stops CORS error
+(function () {
   var cors_api_host = 'cors-anywhere.herokuapp.com';
   var cors_api_url = 'https://' + cors_api_host + '/';
   var slice = [].slice;
   var origin = window.location.protocol + '//' + window.location.host;
   var open = XMLHttpRequest.prototype.open;
-  XMLHttpRequest.prototype.open = function() {
-      var args = slice.call(arguments);
-      var targetOrigin = /^https?:\/\/([^\/]+)/i.exec(args[1]);
-      if (targetOrigin && targetOrigin[0].toLowerCase() !== origin &&
-          targetOrigin[1] !== cors_api_host) {
-          args[1] = cors_api_url + args[1];
-      }
-      return open.apply(this, args);
+  XMLHttpRequest.prototype.open = function () {
+    var args = slice.call(arguments);
+    var targetOrigin = /^https?:\/\/([^\/]+)/i.exec(args[1]);
+    if (targetOrigin && targetOrigin[0].toLowerCase() !== origin &&
+      targetOrigin[1] !== cors_api_host) {
+      args[1] = cors_api_url + args[1];
+    }
+    return open.apply(this, args);
   };
 })();
+//-------------------------
 
+$('#information').hide();
+
+//Starting Buttons
 var gifButtons = ["Mario", "Sonic", "Kirby", "Solid Snake", "Ryu", "Master Chief", "Yoshi", "Crash Bandicoot"];
 
-for (i = 0; i < gifButtons.length; i++){
-    var characterButtons = $('<button>'+ gifButtons[i] + '</button>');
-    characterButtons.attr("class", "showGif btn btn-primary"); //putting attributes one at a time
-    characterButtons.attr("style", "margin:5px");
-    characterButtons.attr("data-character", gifButtons[i]);
-    $('#characterButtons').append(characterButtons)
-      }
+//Makes Buttons for the array above
+for (i = 0; i < gifButtons.length; i++) {
+  var characterButtons = $('<button>' + gifButtons[i] + '</button>');
+  characterButtons.attr("class", "showGif btn btn-primary"); //putting attributes one at a time
+  characterButtons.attr("style", "margin:5px");
+  characterButtons.attr("data-character", gifButtons[i]);
+  $('#characterButtons').append(characterButtons)
+}
 
+//Our Search Button Function
+$('#search').click(function (e) {
 
-  $('#search').click(function(e){
+  e.preventDefault();
 
-    e.preventDefault();
-    
-    var searchTerm = $('#search-term').val().trim();
-    
-    gifButtons.push(searchTerm);
-    
-   var searchedCharacter = $('<button>' + searchTerm + '</button>');
-   searchedCharacter.attr({ // entering ALL  attributes
-        "class": "showGif btn btn-default",
-        "style": "margin:5px",
-        "data-character": searchTerm 
-   });
+  var searchTerm = $('#search-term').val().trim();
 
-   $('#characterButtons').append(searchedCharacter);
-   $('.showGif').on("click", theSearch);
+  gifButtons.push(searchTerm);
 
+  var searchedCharacter = $('<button>' + searchTerm + '</button>');
+  searchedCharacter.attr({ // entering ALL  attributes
+    "class": "showGif btn btn-primary",
+    "style": "margin:5px",
+    "data-character": searchTerm
   });
 
+  $('#characterButtons').append(searchedCharacter);
+  $('.showGif').on("click", theSearch);
+  $('.showGif').on('click', bioSearch);
 
-//The click event
+});
+
+
+//Sets up Click Event for the Functions THEY RUN IN THIS EXACT ORDER!
+$('.showGif').on("click", emptyGifs);
 $('.showGif').on("click", theSearch);
-$(".gif").on("click", runOrStop);
 $('.showGif').on('click', bioSearch);
+$(".gif").on("click", runOrStop);
 
-function bioSearch() { //testing out GiantBomb wiki API, error = No 'Access-Control-Allow-Origin' header is present on the requested resource. Origin 'null' is therefore not allowed access.
+
+
+//To Empty Our Gifs Area.
+function emptyGifs() {
+  $('#gifs-appear-here').empty();
+}
+
+//Biography Search Function
+function bioSearch() {
 
   var characterName = $(this).attr("data-character");
   var noSpaceName = encodeURIComponent(characterName)
@@ -61,69 +77,74 @@ function bioSearch() { //testing out GiantBomb wiki API, error = No 'Access-Cont
 
   $.ajax({
     url: queryURL,
-    method:"GET"
-  }).then(function(response) {
+    method: "GET"
+  }).then(function (response) {
 
     var results = response.results[0].deck
-    console.log(results)
 
-    $('#bio').html(results);
-  })
+    $('#display-character-name').empty();
+    $('#display-bio').empty();
+    $('#information').hide();
+
+    $('#display-character-name').html(characterName);
+    $('#display-bio').html(results);
+    $('#information').show();
+
+  });
 }
 
-//The separate function.
+//Giphy Search Function
 function theSearch() {
   var characterName = $(this).attr("data-character");
 
-  var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
-    characterName + "&api_key=S2WxAN0l1NhiYgOVUn8rPyjLMMlcPbXK&limit=10";
+  var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + characterName + "&api_key=S2WxAN0l1NhiYgOVUn8rPyjLMMlcPbXK&limit=10";
+console.log(queryURL);
+
+  $.ajax({
+    url: queryURL,
+    method: "GET"
+  })
+    .then(function (response) {
+      var results = response.data;
+
+      for (var i = 0; i < results.length; i++) {
+
+        if (results[i].rating !== "r" && results[i].rating !== "pg-13") {
+          var gifDiv = $("<div class='item'>");
+
+          var rating = results[i].rating;
+
+          var p = $("<p>").text("Rating: " + rating);
+
+          var characterImage = $("<img>");
+
+          characterImage.attr("src", results[i].images.original_still.url);
+
+          characterImage.attr({
+            "data-still": results[i].images.original_still.url,
+            "data-animate": results[i].images.original.url,
+            "data-state": "still",
+            "style": "display: block; margin-left: auto; margin-right: auto; width: 50%;",
+            "id": "picture"
+
+          });
 
 
-  
-$.ajax({
-  url: queryURL,
-  method: "GET"
-})
-  .then(function(response) {
-    var results = response.data;
 
-    for (var i = 0; i < results.length; i++) {
+          characterImage.addClass("gif");
+          gifDiv.append(p);
+          gifDiv.append(characterImage);
 
-      if (results[i].rating !== "r" && results[i].rating !== "pg-13") {
-        var gifDiv = $("<div class='item'>");
+          $("#gifs-appear-here").prepend(gifDiv);
+          $("#picture").on("click", runOrStop);
 
-        var rating = results[i].rating;
-
-        var p = $("<p>").text("Rating: " + rating);
-
-        var characterImage = $("<img>");
-
-        characterImage.attr("src", results[i].images.original_still.url);
-
-        characterImage.attr({
-          "data-still" : results[i].images.original_still.url,
-          "data-animate" : results[i].images.original.url,
-          "data-state": "still",
-          "style": "display: block; margin-left: auto; margin-right: auto; width: 50%;",
-          "id": "picture"
-
-        });
-
-        characterImage.addClass("gif");
-        gifDiv.append(p);
-        gifDiv.append(characterImage);
-
-        $("#gifs-appear-here").prepend(gifDiv);
-        $("#picture").on("click", runOrStop);
-
-
+        }
       }
-  }
-});
+    });
 }
 
-//Add Stop and Go Functions.
-function runOrStop (){
+//Play or Pause Gif Function.
+function runOrStop() {
   var state = $(this).attr("data-state");
 
   if (state === "still") {
